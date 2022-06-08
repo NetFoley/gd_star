@@ -8,6 +8,7 @@ shader_param/direction = Vector3( 0, -1, 0 )
 shader_param/spread = 360.0
 shader_param/flatness = 0.0
 shader_param/initial_linear_velocity = 0.0
+shader_param/second_initial_linear_velocity = null
 shader_param/initial_angle = 0.0
 shader_param/angular_velocity = 0.0
 shader_param/orbit_velocity = 0.0

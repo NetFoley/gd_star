@@ -1,7 +1,11 @@
-[gd_scene load_steps=4 format=2]
+[gd_scene load_steps=8 format=2]
 
 [ext_resource path="res://scenes/Star.tscn" type="PackedScene" id=1]
 [ext_resource path="res://scenes/Planet.tscn" type="PackedScene" id=2]
+[ext_resource path="res://ItemList.gd" type="Script" id=4]
+[ext_resource path="res://UI.gd" type="Script" id=5]
+[ext_resource path="res://Map.gd" type="Script" id=6]
+[ext_resource path="res://Camera2D.gd" type="Script" id=7]
 
 [sub_resource type="Environment" id=1]
 background_mode = 4
@@ -19,34 +23,75 @@ glow_hdr_scale = 0.0
 glow_bicubic_upscale = true
 glow_high_quality = true
 
-[node name="Node2D" type="Node2D"]
+[node name="Space" type="Node2D"]
 position = Vector2( -850, 5 )
-
-[node name="Planet" parent="." instance=ExtResource( 2 )]
-position = Vector2( 1791, 865 )
-rotation = -0.872586
-linear_velocity = Vector2( -100, 20 )
-angular_velocity = 40.0
-
-[node name="Planet2" parent="." instance=ExtResource( 2 )]
-position = Vector2( 487, 106 )
-mass = 150.0
-linear_velocity = Vector2( 50, 50 )
-angular_velocity = 180.0
-
-[node name="Planet3" parent="." instance=ExtResource( 2 )]
-position = Vector2( 3285, 360 )
-linear_velocity = Vector2( -100, 0 )
-angular_velocity = 150.0
+script = ExtResource( 6 )
 
 [node name="Star" parent="." instance=ExtResource( 1 )]
-position = Vector2( 1357, 503 )
+position = Vector2( 1357, 506 )
+input_pickable = true
+mass = 2.0
 contacts_reported = 0
+stuck = true
 
 [node name="Camera2D" type="Camera2D" parent="Star"]
+show_behind_parent = true
 position = Vector2( 2, -11 )
 current = true
-zoom = Vector2( 3, 3 )
+zoom = Vector2( 2, 2 )
+smoothing_enabled = true
+smoothing_speed = 2.0
+script = ExtResource( 7 )
+
+[node name="ColorRect" type="ColorRect" parent="Star/Camera2D"]
+show_behind_parent = true
+margin_left = -26328.0
+margin_top = -25501.0
+margin_right = 23672.0
+margin_bottom = 24499.0
+mouse_filter = 2
+color = Color( 0, 0, 0, 1 )
+
+[node name="Planet" parent="." instance=ExtResource( 2 )]
+position = Vector2( 1677, 714 )
+rotation = -0.872586
+mass = 0.01
+linear_velocity = Vector2( -100, 250 )
+angular_velocity = 5.0
+
+[node name="Planet2" parent="." instance=ExtResource( 2 )]
+position = Vector2( 477, 237 )
+mass = 0.05
+linear_velocity = Vector2( 50, 200 )
+angular_velocity = 15.0
+
+[node name="Planet3" parent="." instance=ExtResource( 2 )]
+position = Vector2( 1765, 542 )
+mass = 0.1
+linear_velocity = Vector2( 0, -150 )
+angular_velocity = 2.0
 
 [node name="WorldEnvironment" type="WorldEnvironment" parent="."]
 environment = SubResource( 1 )
+
+[node name="CanvasLayer" type="CanvasLayer" parent="."]
+script = ExtResource( 5 )
+
+[node name="ItemList" type="ItemList" parent="CanvasLayer"]
+margin_right = 150.0
+rect_clip_content = false
+max_text_lines = 5
+auto_height = true
+max_columns = 2
+fixed_icon_size = Vector2( 50, 50 )
+script = ExtResource( 4 )
+
+[node name="HSlider" type="HSlider" parent="CanvasLayer/ItemList"]
+anchor_top = 1.0
+anchor_bottom = 1.0
+margin_right = 150.0
+margin_bottom = 16.0
+min_value = 1.0
+step = 0.01
+value = 1.0
+exp_edit = true
