@@ -1,5 +1,6 @@
 extends "res://Planets/Planet.gd"
 
+var res = preload("res://Planets/DryTerran/DryTerran.tres")
 
 func set_pixels(amount):
 	$Land.material.set_shader_param("pixels", amount)
@@ -27,6 +28,9 @@ func get_colors():
 
 func set_colors(colors):
 	_set_colors_from_gradient($Land.material, "colors", colors)
+
+func _ready() -> void:
+	$Land.material = res.duplicate(true)
 
 func randomize_colors():
 	var seed_colors = _generate_new_colorscheme(5 + randi()%3, rand_range(0.3, 0.65), 1.0)

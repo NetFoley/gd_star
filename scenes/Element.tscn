@@ -1,19 +1,18 @@
-[gd_scene load_steps=8 format=2]
+[gd_scene load_steps=10 format=2]
 
 [ext_resource path="res://scenes/Element.gd" type="Script" id=1]
 [ext_resource path="res://scenes/Particles/AspirationParticles.tscn" type="PackedScene" id=2]
 [ext_resource path="res://scenes/Particles/ShaderMatPart.tres" type="Material" id=3]
+[ext_resource path="res://scenes/Particles/suckParticlesShader.tres" type="Shader" id=4]
 
 [sub_resource type="GDScript" id=10]
 script/source = "extends Particles2D
 
+var res = preload(\"res://scenes/Particles/ShaderMatPart.tres\")
 
-# Declare member variables here. Examples:
-# var a: int = 2
-# var b: String = \"text\"
+func _ready() -> void:
+	material = res.duplicate(true)
 
-
-# Called when the node enters the scene tree for the first time.
 func set_scale_to(value) -> void:
 	process_material.set_shader_param(\"scale\", value)
 	
@@ -22,6 +21,46 @@ func set_scale_to(value) -> void:
 #func _process(delta: float) -> void:
 #	pass
 "
+
+[sub_resource type="ShaderMaterial" id=12]
+resource_local_to_scene = true
+shader = ExtResource( 4 )
+shader_param/prob_dist = false
+shader_param/direction = Vector3( 0, -1, 0 )
+shader_param/emition_radius = null
+shader_param/spread = 360.0
+shader_param/flatness = 0.0
+shader_param/initial_linear_velocity = 5.0
+shader_param/second_initial_linear_velocity = null
+shader_param/initial_angle = 0.0
+shader_param/angular_velocity = 0.0
+shader_param/orbit_velocity = 0.0
+shader_param/linear_accel = 0.0
+shader_param/radial_accel = 0.0
+shader_param/tangent_accel = 0.0
+shader_param/damping = 0.0
+shader_param/scale = 1.0
+shader_param/part_distance = null
+shader_param/hue_variation = 1.0
+shader_param/anim_speed = 0.0
+shader_param/anim_offset = 0.0
+shader_param/initial_linear_velocity_random = 1.0
+shader_param/initial_angle_random = 1.0
+shader_param/angular_velocity_random = 1.0
+shader_param/orbit_velocity_random = 0.0
+shader_param/linear_accel_random = 0.0
+shader_param/radial_accel_random = 0.0
+shader_param/tangent_accel_random = 0.0
+shader_param/damping_random = 0.0
+shader_param/scale_random = 0.0
+shader_param/hue_variation_random = 0.01
+shader_param/anim_speed_random = 0.0
+shader_param/anim_offset_random = 0.0
+shader_param/lifetime_randomness = 0.0
+shader_param/color_value = Color( 1, 0.654902, 0.654902, 1 )
+shader_param/trail_divisor = 1
+shader_param/gravity = Vector3( 0, 0, 0 )
+shader_param/pos_attraction = Vector2( 0, 0 )
 
 [sub_resource type="CircleShape2D" id=7]
 radius = 93.086
@@ -33,7 +72,6 @@ radius = 2578.34
 radius = 67.0075
 
 [node name="Element" type="RigidBody2D" groups=["Element"]]
-position = Vector2( 7, 2 )
 gravity_scale = 0.0
 contacts_reported = 1
 contact_monitor = true
@@ -42,20 +80,23 @@ angular_damp = 0.0
 script = ExtResource( 1 )
 
 [node name="suckParticles" parent="." instance=ExtResource( 2 )]
-position = Vector2( 2, 6 )
+position = Vector2( 0, 0 )
 amount = 100000
 lifetime = 30.0
 visibility_rect = Rect2( -40000, -40000, 80000, 80000 )
+draw_order = 1
 process_material = ExtResource( 3 )
 script = SubResource( 10 )
 
 [node name="ExplosionParticles" parent="." instance=ExtResource( 2 )]
-position = Vector2( 6, -2 )
-lifetime = 100.0
+position = Vector2( 0, 0 )
+amount = 15001
+lifetime = 82.78
 one_shot = true
 explosiveness = 1.0
 visibility_rect = Rect2( -40000, -40000, 80000, 80000 )
-process_material = ExtResource( 3 )
+draw_order = 1
+process_material = SubResource( 12 )
 script = SubResource( 10 )
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]

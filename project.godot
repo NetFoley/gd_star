@@ -9,6 +9,11 @@
 config_version=4
 
 _global_script_classes=[ {
+"base": "Label",
+"class": "AtomAmount",
+"language": "GDScript",
+"path": "res://scenes/atoms/atom_amount.gd"
+}, {
 "base": "RigidBody2D",
 "class": "Element",
 "language": "GDScript",
@@ -25,6 +30,7 @@ _global_script_classes=[ {
 "path": "res://scenes/Star.gd"
 } ]
 _global_script_class_icons={
+"AtomAmount": "",
 "Element": "",
 "Planet": "",
 "Star": ""
@@ -48,6 +54,7 @@ window/stretch/aspect="keep"
 [global]
 
 phys=false
+idle=false
 
 [input]
 

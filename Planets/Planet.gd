@@ -8,6 +8,7 @@ export (float) var gui_zoom = 1.0
 
 func _ready():
 	original_colors = get_colors()
+	randomize_colors()
 
 func set_pixels(_amount):
 	pass

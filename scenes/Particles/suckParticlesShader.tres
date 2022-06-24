@@ -4,11 +4,13 @@
 code = "// NOTE: Shader automatically converted from Godot Engine 3.4.4.stable's ParticlesMaterial.
 
 shader_type particles;
+uniform bool prob_dist;
 uniform vec3 direction;
+uniform float emition_radius;
 uniform float spread;
 uniform float flatness;
 uniform float initial_linear_velocity;
-uniform vec3 second_initial_linear_velocity;
+uniform float second_initial_linear_velocity;
 uniform float initial_angle;
 uniform float angular_velocity;
 uniform float orbit_velocity;
@@ -91,7 +93,7 @@ void vertex() {
 			float angle1_rad = rand_from_seed_m1_p1(alt_restart_seed) * spread_rad;
 			angle1_rad += direction.x != 0.0 ? atan(direction.y, direction.x) : sign(direction.y) * (pi / 2.0);
 			vec3 rot = vec3(cos(angle1_rad), sin(angle1_rad), 0.0);
-			VELOCITY = rot * initial_linear_velocity * mix(1.0, rand_from_seed(alt_restart_seed), initial_linear_velocity_random) + second_initial_linear_velocity;
+			VELOCITY = (second_initial_linear_velocity+rot * initial_linear_velocity) * mix(1.0, rand_from_seed(alt_restart_seed), initial_linear_velocity_random);
 		}
 		float base_angle = (initial_angle + tex_angle) * mix(1.0, angle_rand, initial_angle_random);
 		CUSTOM.x = base_angle * degree_to_rad;
@@ -104,15 +106,15 @@ void vertex() {
 		TRANSFORM = EMISSION_TRANSFORM * TRANSFORM;
 		VELOCITY.z = 0.0;
 		TRANSFORM[3].z = 0.0;
-		float radius = 50.0;
+		float radius = emition_radius;
 		TRANSFORM[3].x += rand_from_seed(alt_restart_seed)*radius*2.0-radius;
 		TRANSFORM[3].y += rand_from_seed(alt_restart_seed)*radius*2.0-radius;
 		vec3 pos = TRANSFORM[3].xyz;
 		vec3 diffe = vec3(pos_attraction.x, pos_attraction.y, 0) - pos;
 		vec3 dir = normalize(diffe);
 		float dist = length(diffe);
-		if(1000.0 < rand_from_seed(alt_restart_seed)*pow(dist-part_distance,2.2)){
-			CUSTOM.y = 1.0;
+		if(prob_dist && pow(dist, 2.0) > rand_from_seed(alt_restart_seed)*part_distance){
+			CUSTOM.y = 1.0; // INVISIBLE
 		}
 		
 	} else {
@@ -132,10 +134,10 @@ void vertex() {
 		vec3 diffe = vec3(pos_attraction.x, pos_attraction.y, 0) - pos;
 		vec3 dir = normalize(diffe);
 		float dist = length(diffe);
-		if(dist < 10.0){
-			dist = 10.0;
+		if(dist < 1.0){
+			dist = 1.0;
 		}
-		vec3 force = (dir*100000.0)/(pow(dist,1.0));
+		vec3 force = (dir*100000.0)/(pow(dist,0.9));
 		float scale_factor = dist;
 		
 		pos.z = 0.0;

@@ -1,16 +1,19 @@
 extends Camera2D
 
 
-# Declare member variables here. Examples:
-# var a: int = 2
-# var b: String = "text"
-
-
 # Called when the node enters the scene tree for the first time.
-func _ready() -> void:
-	var __ = GAME.connect("camera_size_change", self, "_on_new_size")
 
-func _on_new_size(new_size) -> void:
+func _physics_process(_delta: float) -> void:
+	var star_follow = null
+	for star in get_tree().get_nodes_in_group("Star"):
+		if star_follow == null or star.atom_masses["h"] > star_follow.atom_masses["h"]:
+			star_follow = star
+	if !is_instance_valid(star_follow):
+		return
+	set_position(star_follow.position)
+	
+	var new_size = star_follow.element_size/3.0
+	
 	zoom.x = new_size
 	zoom.y = new_size
 

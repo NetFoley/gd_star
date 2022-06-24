@@ -1,5 +1,7 @@
 extends "res://Planets/Planet.gd"
 
+var res = preload("res://Planets/Star/Star.tres")
+
 func set_pixels(amount):
 	$StarBackground.material.set_shader_param("pixels", amount*relative_scale)
 	$Star.material.set_shader_param("pixels", amount)
@@ -40,6 +42,9 @@ func _ready():
 	
 	starflarecolor1.colors = [Color("ffd832"), Color("f5ffe8")]
 	starflarecolor2.colors = [Color("77d6c1"), Color("f5ffe8")]
+	
+	$Star.material = res.duplicate(true)
+	
 
 func _set_colors(sd): # this is just a little extra function to show some different possible stars
 	if (sd % 2 == 0):
@@ -58,6 +63,7 @@ func update_time(t):
 	$StarBackground.material.set_shader_param("time", t * get_multiplier($StarBackground.material) * 0.01)
 	$Star.material.set_shader_param("time", t * get_multiplier($Star.material) * 0.005)
 	$StarFlares.material.set_shader_param("time", t * get_multiplier($StarFlares.material) * 0.015)
+	$StarFlaresContact.material.set_shader_param("time", t * get_multiplier($StarFlaresContact.material) * 0.015)
 
 func set_custom_time(t):
 	$StarBackground.material.set_shader_param("time", t * get_multiplier($StarBackground.material))

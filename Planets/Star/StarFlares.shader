@@ -7,6 +7,8 @@ uniform float time_speed : hint_range(0.0, 1.0) = 0.05;
 uniform float time;
 uniform float rotation : hint_range(0.0, 6.28) = 0.0;
 uniform float direction = 0.0;
+uniform bool should_direc = false;
+
 uniform bool should_dither = true;
 
 uniform float storm_width : hint_range(0.0, 0.5) = 0.3;
@@ -91,7 +93,6 @@ vec2 spherify(vec2 uv) {
 void fragment() {
 	// pixelize uv
 	vec2 pixelized = floor(UV*pixels)/pixels;
-	
 	// use dither val later to interpolate between alpha
 	bool dith = dither(UV, pixelized);
 	
@@ -101,12 +102,12 @@ void fragment() {
 	vec2 uv = pixelized;//rotate(pixelized, -time  * time_speed);
 	
 	// angle from centered uv's
-	float angle = atan(uv.x - 0.5, uv.y - 0.5) * 0.4;
+	float angle = atan(uv.x - 0.5, uv.y - 0.5);
 	// distance from center
 	float d = distance(pixelized, vec2(0.5));
 	
 	// we make uv circular here to have eternally outward moving stuff
-	vec2 circleUV = vec2(d, angle);
+	vec2 circleUV = vec2(d, angle * 0.4);
 	
 	// two types of noise values
 	float n = fbm(circleUV*size -time * time_speed);
@@ -117,8 +118,25 @@ void fragment() {
 	nc -= n2 * 0.1;
 	
 	// our alpha, default 0
+	float ang_to = direction;
+	
+	float sa = 0.0;
+	if (angle <= ang_to){
+		sa = ang_to-angle;
+		if (angle < 0.0 && direction > 1.0){
+			sa -= 6.283;
+		}
+	}
+	else{
+		sa = angle-ang_to;
+		if (angle > 0.0 && direction < -1.0){
+			sa -= 6.283;
+		}
+	}
+	
+	
 	float a = 0.0;
-	if (1.0 - d > nc) {
+	if (1.0 - d > nc && abs(sa) < 0.4) {
 		// now we generate very thin strips of positive alpha if our noise has certain values and is close enough to center
 		if (nc > storm_width - storm_dither_width + d && (dith || !should_dither)) {
 			a = 1.0;
